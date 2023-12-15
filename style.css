@@ -1,0 +1,21 @@
+body{
+    text-align: center;
+    background-color: cadetblue;
+    font-family: 'Poppins', sans-serif;
+}
+button{
+    padding: 10px;
+}
+#otsikko{
+    margin-top: 80px;
+}
+#salasana{
+    margin-bottom: 20px;
+}
+#virheIlmoitus{
+    color: red;
+}
+#login{
+    margin: auto;
+    margin-top: 80px;
+}
