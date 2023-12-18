@@ -3,7 +3,11 @@ body{
     background-color: cadetblue;
     font-family: 'Poppins', sans-serif;
 }
-button{
+
+#kirjauduBtn{
+    padding: 10px;
+}
+#uusiKayttajaBtn{
     padding: 10px;
 }
 #otsikko{
@@ -18,4 +22,10 @@ button{
 #login{
     margin: auto;
     margin-top: 80px;
+    /* display: none; muista poistaa */
+}
+#aanestykset{
+    margin: auto;
+    margin-top: 40px;
+    display: none;
 }
