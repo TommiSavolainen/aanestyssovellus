@@ -22,10 +22,17 @@ body{
 #login{
     margin: auto;
     margin-top: 80px;
-    /* display: none; muista poistaa */
+    display: none;
 }
 #aanestykset{
+    
     margin: auto;
     margin-top: 40px;
+    width: 500px;
     display: none;
+}
+#admin{
+    margin: auto;
+    margin-top: 40px;
+    width: 500px;
 }

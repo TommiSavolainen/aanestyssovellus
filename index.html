@@ -41,6 +41,19 @@
             <progress id="vaihtoehto4" max="100"></progress>
             <button id="aanesta4">Äänestä</button><br />
         </div>
+        <div id="admin">
+            <h3>Äänestyksen teko työkalu</h3>
+            <p>Lisää ensin otsikko ja sitten äänestys vaihtoehdot</p>
+            <label for="uusiAanestysOtsikko">Syötä otsikko:</label><br />
+            <input type="text" name="uusiAanestysOtsikko" id="uusiAanestysOtsikko" /><br />
+            <button id="lisaaOtsikkoBtn">Lisää otsikko</button><br />
+            <label for="lisaaAanestysItem">Syötä äänestys item:</label><br />
+            <input type="text" name="lisaaAanestysItem" id="lisaaAanestysItem" /><br />
+            <button id="lisaaItemBtn">Lisää item</button>
+            <button id="talletaBtn">Lataa äänestys tietokantaan</button>
+            <div id="aanestys"></div>
+        </div>
+
         <script src="main.js"></script>
     </body>
 </html>
