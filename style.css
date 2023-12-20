@@ -22,7 +22,7 @@ body{
 #login{
     margin: auto;
     margin-top: 80px;
-    display: none;
+    display: block;
 }
 #aanestykset{
     
@@ -31,8 +31,26 @@ body{
     width: 500px;
     display: none;
 }
+
+#poistaBtn{
+    display: none;
+}
+#poistaBr{
+    display: none;
+}
+
+#admin #poistaBtn{
+    margin: auto;
+    display: block;
+}
+
+#admin #poistaBr{
+    display: block;
+}
+
 #admin{
     margin: auto;
     margin-top: 40px;
     width: 500px;
+
 }

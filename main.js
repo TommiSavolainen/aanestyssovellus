@@ -20,11 +20,21 @@ let aanestys = document.getElementById('aanestys');
 let aanestysOtsikko = document.createElement('h3');
 let div = document.createElement('div');
 let items = [];
+let katso = document.getElementById('katso');
 lisaaItemBtn.addEventListener('click', lisaaUusiItem);
 lisaaOtsikkoBtn.addEventListener('click', lisaaOtsikko);
 uusiKayttajaBtn.addEventListener('click', lisaaUusiKayttaja);
 kirjauduBtn.addEventListener('click', kirjaudu);
 talletaBtn.addEventListener('click', talleta);
+katso.addEventListener('click', katsoJaPoista);
+document.addEventListener('click', poista);
+document.addEventListener('click', aanesta);
+
+if (usersList == null) {
+    usersList = [];
+} else {
+    usersList = JSON.parse(localStorage.getItem('users'));
+}
 
 if (aanestysNumber == null) {
     aanestysNumber = 1;
@@ -65,11 +75,53 @@ function kirjaudu() {
 function aanestykset() {
     login.style.display = 'none';
     aanestyksetLuettelo.style.display = 'block';
+    for (let key in localStorage) {
+        if (key == 'aanestysNumber') {
+            continue;
+        }
+        if (key.startsWith('aanestys')) {
+            let x = JSON.parse(localStorage.getItem(key));
+            aanestyksetLuettelo.innerHTML += x;
+            console.log(x);
+        }
+    }
 }
 
 function adminPanel() {
     login.style.display = 'none';
     admin.style.display = 'block';
+}
+
+function katsoJaPoista() {
+    for (let key in localStorage) {
+        if (key == 'aanestysNumber') {
+            continue;
+        }
+        if (key.startsWith('aanestys')) {
+            let x = JSON.parse(localStorage.getItem(key));
+            aanestys.innerHTML += x;
+
+            console.log(x);
+        }
+    }
+}
+
+function poista(e) {
+    let element = e.target;
+    if (element.id == 'poistaBtn') {
+        localStorage.removeItem(element.parentNode.id);
+        element.parentNode.remove();
+        console.log(element.parentNode);
+    }
+}
+
+// todo juokseva id progress elementteihin ja sen mukaan tallennetaan localStorageen
+function aanesta(e) {
+    let element = e.target;
+    if (element.id == 'itemBtn') {
+        element.previousSibling.value++;
+        console.log(element.previousSibling);
+    }
 }
 
 function lisaaOtsikko() {
@@ -79,8 +131,16 @@ function lisaaOtsikko() {
         aanestysOtsikko.innerHTML = uusiAanestysOtsikko.value;
         div = document.createElement('div');
         div.id = 'aanestys' + aanestysNumber;
+        let br = document.createElement('br');
+        br.id = 'poistaBr';
+        let poistaBtn = document.createElement('button');
+        poistaBtn.id = 'poistaBtn';
+        poistaBtn.innerHTML = 'Poista';
+
         aanestys.appendChild(div);
         div.appendChild(aanestysOtsikko);
+        div.appendChild(poistaBtn);
+        div.appendChild(br);
         lisaaOtsikkoBtn.disabled = true;
     }
 }
@@ -98,7 +158,7 @@ function lisaaUusiItem() {
         progress.max = 100;
         let button = document.createElement('button');
         button.innerHTML = 'Äänestä';
-        button.id = 'item' + itemNumber + 'Btn';
+        button.id = 'itemBtn';
         let br = document.createElement('br');
         div.appendChild(label);
         div.appendChild(progress);
@@ -113,12 +173,13 @@ function lisaaUusiItem() {
 
 function talleta() {
     console.log(aanestysNumber);
-    localStorage.setItem('aanestys' + aanestysNumber, JSON.stringify(items));
+    localStorage.setItem('aanestys' + aanestysNumber, JSON.stringify(items[items.length - 1]));
     aanestysNumber++;
     localStorage.setItem('aanestysNumber', aanestysNumber);
     aanestys.innerHTML = '';
     uusiAanestysOtsikko.value = '';
     lisaaOtsikkoBtn.disabled = false;
+    items = [];
 }
 
 function lisaaUusiKayttaja() {
