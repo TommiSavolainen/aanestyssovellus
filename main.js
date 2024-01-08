@@ -29,6 +29,18 @@ talletaBtn.addEventListener('click', talleta);
 katso.addEventListener('click', katsoJaPoista);
 document.addEventListener('click', poista);
 document.addEventListener('click', aanesta);
+let aanestysObject = [
+    {
+        aanestys1: {
+            otsikko: 'eka',
+            items: [
+                { labelName: 'Punainen', progressBar: 0 },
+                { labelName: 'Sininen', progressBar: 0 },
+            ],
+        },
+    },
+];
+localStorage.setItem('aanestykset', JSON.stringify(aanestysObject));
 
 if (usersList == null) {
     usersList = [];
@@ -93,17 +105,52 @@ function adminPanel() {
 }
 
 function katsoJaPoista() {
-    for (let key in localStorage) {
-        if (key == 'aanestysNumber') {
-            continue;
-        }
-        if (key.startsWith('aanestys')) {
-            let x = JSON.parse(localStorage.getItem(key));
-            aanestys.innerHTML += x;
+    let aanestyksetList = JSON.parse(localStorage.getItem('aanestykset'));
+    aanestyksetList.forEach((aanestysObj) => {
+        aanestysOtsikko.innerHTML = aanestysObj.aanestys1.otsikko;
+        div = document.createElement('div');
+        div.id = aanestysObj.aanestys1.otsikko;
+        let br = document.createElement('br');
+        br.id = 'poistaBr';
+        let poistaBtn = document.createElement('button');
+        poistaBtn.id = 'poistaBtn';
+        poistaBtn.innerHTML = 'Poista';
+        aanestys.appendChild(div);
+        div.appendChild(aanestysOtsikko);
+        div.appendChild(poistaBtn);
+        div.appendChild(br);
+        aanestysObj.aanestys1.items.forEach((item) => {
+            console.log(item.labelName);
+            let br = document.createElement('br');
+            let label = document.createElement('label');
+            let aanestysID = 'ID' + aanestysNumber;
+            label.htmlFor = item.labelName;
+            label.innerHTML = item.labelName;
+            let progress = document.createElement('progress');
+            progress.id = item.labelName;
+            // localStorage.setItem(progress.id, 0);
+            progress.value = item.progressBar;
+            progress.max = 100;
+            let button = document.createElement('button');
+            button.innerHTML = 'Äänestä';
+            button.id = 'itemBtn';
+            div.appendChild(label);
+            div.appendChild(progress);
+            div.appendChild(button);
+            div.appendChild(br);
+        });
+    });
+    // for (let key in localStorage) {
+    //     if (key == 'aanestysNumber') {
+    //         continue;
+    //     }
+    //     if (key.startsWith('aanestys')) {
+    //         let x = JSON.parse(localStorage.getItem(key));
+    //         aanestys.innerHTML += x;
 
-            console.log(x);
-        }
-    }
+    //         console.log(x);
+    //     }
+    // }
 }
 
 function poista(e) {
@@ -119,8 +166,11 @@ function poista(e) {
 function aanesta(e) {
     let element = e.target;
     if (element.id == 'itemBtn') {
-        element.previousSibling.value++;
-        console.log(element.previousSibling);
+        let aanestysId = localStorage.getItem(element.previousSibling.id);
+        aanestysId = Number(aanestysId) + 1;
+        localStorage.setItem(element.previousSibling.id, aanestysId);
+        element.previousSibling.value = Number(localStorage.getItem(element.previousSibling.id));
+        console.log(element.previousSibling.id);
     }
 }
 
@@ -150,11 +200,13 @@ function lisaaUusiItem() {
         alert('Äänestys item kenttä tyhjä!');
     } else {
         let label = document.createElement('label');
-        label.htmlFor = 'item' + itemNumber;
+        let aanestysID = 'ID' + aanestysNumber;
+        label.htmlFor = aanestysID + 'item' + itemNumber;
         label.innerHTML = lisaaAanestysItem.value;
         let progress = document.createElement('progress');
-        progress.id = 'item' + itemNumber;
-        progress.value = 0;
+        progress.id = aanestysID + 'item' + itemNumber;
+        localStorage.setItem(progress.id, 0);
+        progress.value = localStorage.getItem(progress.id);
         progress.max = 100;
         let button = document.createElement('button');
         button.innerHTML = 'Äänestä';
@@ -167,7 +219,7 @@ function lisaaUusiItem() {
         items.push(div.outerHTML);
         lisaaAanestysItem.value = '';
         itemNumber++;
-        console.log(items);
+        console.log(div.id);
     }
 }
 
