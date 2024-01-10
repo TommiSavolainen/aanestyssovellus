@@ -29,31 +29,41 @@ talletaBtn.addEventListener('click', talleta);
 katso.addEventListener('click', katsoJaPoista);
 document.addEventListener('click', poista);
 document.addEventListener('click', aanesta);
-let aanestysObject = [
-    {
-        aanestys1: {
-            otsikko: 'eka',
-            items: [
-                { labelName: 'Punainen', progressBar: 0 },
-                { labelName: 'Sininen', progressBar: 0 },
-            ],
-        },
-    },
-];
 
+// Haetaan käyttäjät jos niitä löytyy
 if (usersList == null) {
     usersList = [];
 } else {
     usersList = JSON.parse(localStorage.getItem('users'));
 }
-
+// Asetetaan äänestysnumero jos sellaista ei ole jo olemassa
 if (aanestysNumber == null) {
     aanestysNumber = 1;
 } else {
     aanestysNumber = localStorage.getItem('aanestysNumber');
 }
-// localStorage.setItem('aanestys' + aanestysNumber, JSON.stringify(aanestysObject));
+// Ladataan malli äänestys localstorageen jos siellä ei ole vielä muita äänestyksiä
+if (aanestysNumber < 2) {
+    init();
+}
 
+function init() {
+    let malliaanestys = [
+        {
+            otsikko: 'Paras auto',
+            summa: 60,
+            items: [
+                { labelName: 'Audi: ', progress: 30, prosentti: 50 },
+                { labelName: 'BMW: ', progress: 20, prosentti: 33 },
+                { labelName: 'Volvo: ', progress: 10, prosentti: 16 },
+            ],
+        },
+    ];
+    localStorage.setItem('aanestys' + aanestysNumber, JSON.stringify(malliaanestys));
+    aanestysNumber++;
+    localStorage.setItem('aanestysNumber', aanestysNumber);
+}
+// Äänestyssovellukseen kirjautuminen
 function kirjaudu() {
     virheIlmoitus.innerText = '';
     virheIlmoitus.innerText = '';
@@ -84,6 +94,8 @@ function kirjaudu() {
         virheIlmoitus.innerText = 'Syötä käyttäjätunnus!';
     }
 }
+
+// Normaali käyttäjille näkyvät äänestykset luodaan tässä
 function aanestykset() {
     login.style.display = 'none';
     aanestyksetLuettelo.style.display = 'block';
@@ -94,27 +106,20 @@ function aanestykset() {
         if (key.startsWith('aanestys')) {
             let aanestyksetList = JSON.parse(localStorage.getItem(key));
             aanestyksetList.forEach((aanestysObj) => {
+                let aanestysOtsikko = document.createElement('h3');
                 aanestysOtsikko.innerHTML = aanestysObj.otsikko;
                 div = document.createElement('div');
                 div.id = key;
-                // let br = document.createElement('br');
-                // br.id = 'poistaBr';
-                // let poistaBtn = document.createElement('button');
-                // poistaBtn.id = 'poistaBtn';
-                // poistaBtn.innerHTML = 'Poista';
-                aanestys.appendChild(div);
+                aanestyksetLuettelo.appendChild(div);
                 div.appendChild(aanestysOtsikko);
-                // div.appendChild(poistaBtn);
-                // div.appendChild(br);
                 aanestysObj.items.forEach((item) => {
-                    console.log(item.labelName);
                     let br = document.createElement('br');
                     let label = document.createElement('label');
                     label.htmlFor = item.labelName;
                     label.innerHTML = item.labelName;
                     let progress = document.createElement('progress');
                     progress.id = item.labelName;
-                    progress.value = item.progress;
+                    progress.value = item.prosentti;
                     progress.max = 100;
                     let button = document.createElement('button');
                     button.innerHTML = 'Äänestä';
@@ -129,11 +134,13 @@ function aanestykset() {
     }
 }
 
+// Avataan admin paneeli mistä voi lisätä ja poistaa äänestyksiä
 function adminPanel() {
     login.style.display = 'none';
     admin.style.display = 'block';
 }
 
+// Avataan esikatselu äänestyksistä mistä voi poistaa myös äänestyksiä
 function katsoJaPoista() {
     for (let key in localStorage) {
         if (key == 'aanestysNumber') {
@@ -142,6 +149,7 @@ function katsoJaPoista() {
         if (key.startsWith('aanestys')) {
             let aanestyksetList = JSON.parse(localStorage.getItem(key));
             aanestyksetList.forEach((aanestysObj) => {
+                let aanestysOtsikko = document.createElement('h3');
                 aanestysOtsikko.innerHTML = aanestysObj.otsikko;
                 div = document.createElement('div');
                 div.id = key;
@@ -155,14 +163,13 @@ function katsoJaPoista() {
                 div.appendChild(poistaBtn);
                 div.appendChild(br);
                 aanestysObj.items.forEach((item) => {
-                    console.log(item.labelName);
                     let br = document.createElement('br');
                     let label = document.createElement('label');
                     label.htmlFor = item.labelName;
                     label.innerHTML = item.labelName;
                     let progress = document.createElement('progress');
                     progress.id = item.labelName;
-                    progress.value = item.progress;
+                    progress.value = item.prosentti;
                     progress.max = 100;
                     let button = document.createElement('button');
                     button.innerHTML = 'Äänestä';
@@ -177,6 +184,7 @@ function katsoJaPoista() {
     }
 }
 
+// äänestyksen poisto
 function poista(e) {
     let element = e.target;
     if (element.id == 'poistaBtn') {
@@ -185,24 +193,39 @@ function poista(e) {
     }
 }
 
-// todo kirjaudu sivulle tavarat tulemaan localstoragesta ja vara äänestykset jos localstorage tyhjä
+// äänestyksien laskenta
 function aanesta(e) {
     let element = e.target;
     if (element.id == 'itemBtn') {
         let aanestysId = JSON.parse(localStorage.getItem(element.parentNode.id));
         aanestysId.forEach((item) => {
+            item.summa++;
             item.items.forEach((aanestys) => {
                 if (aanestys.labelName == element.previousSibling.id) {
                     aanestys.progress = Number(aanestys.progress) + 1;
-                    console.log(aanestys.progress);
-                    element.previousSibling.value = aanestys.progress;
                 }
+            });
+        });
+        localStorage.setItem(element.parentNode.id, JSON.stringify(aanestysId));
+        tarkistaAanestysProsentit();
+    }
+    function tarkistaAanestysProsentit() {
+        let aanestysId = JSON.parse(localStorage.getItem(element.parentNode.id));
+        let x = element.parentNode.querySelectorAll('progress');
+        aanestysId.forEach((item) => {
+            item.items.forEach((aanestys, index) => {
+                x.forEach((tulos, i) => {
+                    if (index == i) {
+                        tulos.value = Math.floor((Number(aanestys.progress) / item.summa) * 100);
+                        aanestys.prosentti = tulos.value;
+                    }
+                });
             });
         });
         localStorage.setItem(element.parentNode.id, JSON.stringify(aanestysId));
     }
 }
-
+// Määritetään uuden äänestyksen otsikko
 function lisaaOtsikko() {
     if (uusiAanestysOtsikko.value == '') {
         alert('Otsikko kenttä tyhjä!');
@@ -224,6 +247,8 @@ function lisaaOtsikko() {
     }
 }
 let item = [];
+
+// Määritetään äänestys objektit
 function lisaaUusiItem() {
     if (lisaaAanestysItem.value == '') {
         alert('Äänestys item kenttä tyhjä!');
@@ -245,14 +270,15 @@ function lisaaUusiItem() {
         div.appendChild(button);
         div.appendChild(br);
 
-        item.push({ labelName: lisaaAanestysItem.value, progress: 0 });
+        item.push({ labelName: lisaaAanestysItem.value, progress: 0, prosentti: 0 });
         lisaaAanestysItem.value = '';
         itemNumber++;
     }
 }
 
+// talletetaan äänestys localstorageen
 function talleta() {
-    items = [{ otsikko: uusiAanestysOtsikko.value, items: item }];
+    items = [{ otsikko: uusiAanestysOtsikko.value, summa: 0, items: item }];
     localStorage.setItem('aanestys' + aanestysNumber, JSON.stringify(items));
     aanestysNumber++;
     localStorage.setItem('aanestysNumber', aanestysNumber);
@@ -262,6 +288,7 @@ function talleta() {
     items = [];
 }
 
+// lisätään uusi käyttäjä localstorageen
 function lisaaUusiKayttaja() {
     virheIlmoitus.innerText = '';
     virheIlmoitus.innerText = '';
