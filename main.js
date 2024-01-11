@@ -134,7 +134,7 @@ function aanestykset() {
     }
 }
 
-// Avataan admin paneeli mistä voi lisätä ja poistaa äänestyksiä
+// Avataan admin paneeli mistä voi lisätä ja poistaa äänestyksiä (Käyttäjätunnus: admin Salasana: admin)
 function adminPanel() {
     login.style.display = 'none';
     admin.style.display = 'block';
