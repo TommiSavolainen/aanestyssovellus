@@ -87,7 +87,7 @@ function kirjaudu() {
             }
         } else {
             virheIlmoitus.style.color = 'red';
-            virheIlmoitus.innerText = 'Syötä salsana!';
+            virheIlmoitus.innerText = 'Syötä salasana!';
         }
     } else {
         virheIlmoitus.style.color = 'red';
@@ -329,7 +329,7 @@ function lisaaUusiKayttaja() {
             }
         } else {
             virheIlmoitus.style.color = 'red';
-            virheIlmoitus.innerText = 'Syötä salsana!';
+            virheIlmoitus.innerText = 'Syötä salasana!';
         }
     } else {
         virheIlmoitus.style.color = 'red';
